@@ -22,20 +22,30 @@ static double diff_in_second(struct timespec t1, struct timespec t2)
     return (diff.tv_sec + diff.tv_nsec / 1000000000.0);
 }
 
-void freeList(entry *pHead)
+void freeList(entry **pHead)
 {
     entry *tmp;
-    while(pHead!=NULL) {
-        tmp = pHead;
-        pHead = pHead->pNext;
+    while(*pHead!=NULL) {
+        tmp = *pHead;
+        *pHead = (*pHead)->pNext;
         free(tmp);
     }
 }
 
+#ifdef BST
+void freeBST(bst **root)
+{
+    if(*root==NULL) return;
+    freeBST(&(*root)->pL);
+    freeBST(&(*root)->pR);
+    free(*root);
+}
+#endif
+
 int main(int argc, char *argv[])
 {
     FILE *fp;
-    int i = 0;
+    int i = 0, line_num=0;
     char line[MAX_LAST_NAME_SIZE];
     struct timespec start, end;
     double cpu_time1, cpu_time2;
@@ -60,24 +70,30 @@ int main(int argc, char *argv[])
     clock_gettime(CLOCK_REALTIME, &start);
     while (fgets(line, sizeof(line), fp)) {
         while (line[i] != '\0')
-            i++;
+            ++i;
         line[i - 1] = '\0';
         i = 0;
         e = append(line, e);
+        ++line_num;
     }
+#ifdef BST
+    /* build the bst */
+    bst *root = convert_to_bst(&(pHead->pNext), line_num);
+#endif
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time1 = diff_in_second(start, end);
 
     /* close file as soon as possible */
     fclose(fp);
 
-    e = pHead;
 
     /* the givn last name to find */
     char input[INPUT_NUM][MAX_LAST_NAME_SIZE] = {
         "zyxel","uninvolved","whiteshank","odontomous",
         "pungoteague","reweighted","xiphisternal","yakattalo"
     };
+
+#ifdef ORG
     e = pHead;
 
     for(i=0; i<INPUT_NUM; ++i) {
@@ -86,21 +102,37 @@ int main(int argc, char *argv[])
         assert(0 == strcmp(findName(input[i], e)->lastName, input[i]));
         printf("%s is found\n",input[i]);
     }
+#elif BST
+    for(i=0; i<INPUT_NUM; ++i) {
+        assert(findName(input[i],root) &&
+               "Did you implement findName() in " IMPL "?");
+        assert(0 == strcmp(findName(input[i], root)->lastName, input[i]));
+        printf("%s is found\n",input[i]);
+    }
+#endif
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
+#ifdef ORG
     for(i=0; i<INPUT_NUM; ++i) findName(input[i], e);
+#elif BST
+    for(i=0; i<INPUT_NUM; ++i) findName(input[i], root);
+#endif
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
 
     printf("execution time of append() : %lf sec\n", cpu_time1);
     printf("execution time of findName() : %lf sec\n", cpu_time2);
 
-    /* FIXME: release all allocated entries */
-    freeList(pHead);
+    /* release all allocated entries */
+#ifdef ORG
+    freeList(&pHead);
+#elif BST
+    freeBST(&root);
+#endif
 
     return 0;
 }

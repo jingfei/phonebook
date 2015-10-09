@@ -5,12 +5,13 @@
 
 #include "phonebook_opt.h"
 
-entry *findName(char lastname[], entry *pHead)
+bst *findName(char lastname[], bst *root)
 {
-    while (pHead != NULL) {
-        if (strcasecmp(lastname, pHead->lastName) == 0)
-            return pHead;
-        pHead = pHead->pNext;
+    while (root != NULL) {
+        int res = strcasecmp(lastname, root->lastName);
+        if (res < 0) return findName(lastname, root->pL);
+        else if(res > 0) return findName(lastname, root->pR);
+        else return root;
     }
     return NULL;
 }
@@ -24,3 +25,22 @@ entry *append(char lastName[], entry *e)
 
     return e;
 }
+
+bst *convert_to_bst(entry **pHead, int n)
+{
+    bst *pL, *root;
+    if(n<=0) return NULL;
+    /* get left leaf */
+    pL = convert_to_bst(pHead, n>>1);
+    /* build root */
+    root = (bst *) malloc(sizeof(bst));
+    strcpy(root->lastName, (*pHead)->lastName);
+    root->pL = pL;
+    /* get right leaf & free link-list*/
+    entry *tmp = *pHead;
+    *pHead = (*pHead)->pNext;
+    free(tmp);
+    root->pR = convert_to_bst(pHead, n-(n>>1)-1);
+    return root;
+}
+

@@ -8,11 +8,11 @@ all: $(EXEC)
 SRCS_common = main.c
 
 phonebook_orig: $(SRCS_common) phonebook_orig.c phonebook_orig.h
-	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -o $@ \
+	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -DORG -o $@ \
 		$(SRCS_common) $@.c
 
 phonebook_opt: $(SRCS_common) phonebook_opt.c phonebook_opt.h
-	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -o $@ \
+	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -DBST -o $@ \
 		$(SRCS_common) $@.c
 
 run: $(EXEC)
@@ -20,7 +20,7 @@ run: $(EXEC)
 
 perf:
 	echo "echo 1 > /proc/sys/vm/drop_caches" | sudo sh
-	perf stat -r 1 -e cache-misses,cache-references,L1-dcache-load-misses,L1-dcache-store-misses,L1-dcache-prefetch-misses,L1-icache-load-misses $(GOAL)
+	perf stat -r 10 -e cache-misses,cache-references,L1-dcache-load-misses,L1-dcache-store-misses,L1-dcache-prefetch-misses,L1-icache-load-misses $(GOAL)
 
 clean:
 	$(RM) $(EXEC) *.o perf.*

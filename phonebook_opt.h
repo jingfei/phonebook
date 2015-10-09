@@ -26,7 +26,14 @@ typedef struct __PHONE_BOOK_SIMPLE {
     struct __PHONE_BOOK_SIMPLE *pNext;
 } entry;
 
-entry *findName(char lastname[], entry *pHead);
+typedef struct __PHONE_BOOK_BST {
+    char lastName[MAX_LAST_NAME_SIZE];
+    struct __PHONE_BOOK_BST *pL;
+    struct __PHONE_BOOK_BST *pR;
+} bst;
+
+bst *findName(char lastname[], bst *root);
 entry *append(char lastName[], entry *e);
+bst *convert_to_bst(entry **pHead, int n);
 
 #endif

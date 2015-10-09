@@ -7,6 +7,7 @@
 #include IMPL
 
 #define DICT_FILE "./dictionary/words.txt"
+#define INPUT_NUM 8
 
 static double diff_in_second(struct timespec t1, struct timespec t2)
 {
@@ -63,19 +64,24 @@ int main(int argc, char *argv[])
     e = pHead;
 
     /* the givn last name to find */
-    char input[MAX_LAST_NAME_SIZE] = "zyxel";
+    char input[INPUT_NUM][MAX_LAST_NAME_SIZE] = {
+        "zyxel","uninvolved","whiteshank","odontomous",
+        "pungoteague","reweighted","xiphisternal","yakattalo"
+    };
     e = pHead;
 
-    assert(findName(input, e) &&
-           "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(findName(input, e)->lastName, "zyxel"));
+    for(i=0; i<INPUT_NUM; ++i) {
+        assert(findName(input[i], e) &&
+               "Did you implement findName() in " IMPL "?");
+        assert(0 == strcmp(findName(input[i], e)->lastName, input[i]));
+    }
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
-    findName(input, e);
+    for(i=0; i<INPUT_NUM; ++i) findName(input[i], e);
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
 

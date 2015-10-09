@@ -1,5 +1,6 @@
 CC ?= gcc
 CFLAGS_common ?= -O0 -Wall -std=gnu99
+GOAL = ./phonebook_orig
 
 EXEC = phonebook_orig phonebook_opt
 all: $(EXEC)
@@ -16,6 +17,9 @@ phonebook_opt: $(SRCS_common) phonebook_opt.c phonebook_opt.h
 
 run: $(EXEC)
 	watch -d -t ./phonebook_orig
+perf:
+	echo "echo 1 > /proc/sys/vm/drop_caches" | sudo sh
+	perf stat -r 1 -e cache-misses,cache-references,L1-dcache-load-misses,L1-dcache-store-misses,L1-dcache-prefetch-misses,L1-icache-load-misses $(GOAL)
 
 clean:
 	$(RM) $(EXEC) *.o perf.*

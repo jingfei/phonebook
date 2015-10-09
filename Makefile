@@ -17,6 +17,7 @@ phonebook_opt: $(SRCS_common) phonebook_opt.c phonebook_opt.h
 
 run: $(EXEC)
 	watch -d -t ./phonebook_orig
+
 perf:
 	echo "echo 1 > /proc/sys/vm/drop_caches" | sudo sh
 	perf stat -r 1 -e cache-misses,cache-references,L1-dcache-load-misses,L1-dcache-store-misses,L1-dcache-prefetch-misses,L1-icache-load-misses $(GOAL)

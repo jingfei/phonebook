@@ -19,8 +19,10 @@ typedef struct __PHONE_BOOK_ENTRY {
 } entry_detail;
 
 typedef struct __PHONE_BOOK_SIMPLE {
-    char lastName[MAX_LAST_NAME_SIZE];
-    entry_detail *detail;
+    union {
+        char lastName[MAX_LAST_NAME_SIZE];
+        entry_detail *detail;
+    };
     struct __PHONE_BOOK_SIMPLE *pNext;
 } entry;
 

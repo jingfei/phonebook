@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
         assert(findName(input[i], e) &&
                "Did you implement findName() in " IMPL "?");
         assert(0 == strcmp(findName(input[i], e)->lastName, input[i]));
+        printf("%s is found\n",input[i]);
     }
 
 #if defined(__GNUC__)

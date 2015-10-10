@@ -22,7 +22,7 @@ static double diff_in_second(struct timespec t1, struct timespec t2)
     return (diff.tv_sec + diff.tv_nsec / 1000000000.0);
 }
 
-void freeList(entry **pHead)
+void deleteList(entry **pHead)
 {
     entry *tmp;
     while(*pHead!=NULL) {
@@ -33,11 +33,11 @@ void freeList(entry **pHead)
 }
 
 #ifdef BST
-void freeBST(bst **root)
+void deleteBST(bst **root)
 {
     if(*root==NULL) return;
-    freeBST(&(*root)->pL);
-    freeBST(&(*root)->pR);
+    deleteBST(&(*root)->pL);
+    deleteBST(&(*root)->pR);
     free(*root);
 }
 #endif
@@ -73,7 +73,11 @@ int main(int argc, char *argv[])
             ++i;
         line[i - 1] = '\0';
         i = 0;
+#ifdef TRIE
+        append(line, e);
+#else
         e = append(line, e);
+#endif
         ++line_num;
     }
 #ifdef BST
@@ -93,20 +97,23 @@ int main(int argc, char *argv[])
         "pungoteague","reweighted","xiphisternal","yakattalo"
     };
 
-#ifdef ORG
-    e = pHead;
-
-    for(i=0; i<INPUT_NUM; ++i) {
-        assert(findName(input[i], e) &&
-               "Did you implement findName() in " IMPL "?");
-        assert(0 == strcmp(findName(input[i], e)->lastName, input[i]));
-        printf("%s is found\n",input[i]);
-    }
-#elif BST
+#ifdef BST
     for(i=0; i<INPUT_NUM; ++i) {
         assert(findName(input[i],root) &&
                "Did you implement findName() in " IMPL "?");
         assert(0 == strcmp(findName(input[i], root)->lastName, input[i]));
+        printf("%s is found\n",input[i]);
+    }
+#else
+    e = pHead;
+    for(i=0; i<INPUT_NUM; ++i) {
+        assert(findName(input[i], e) &&
+               "Did you implement findName() in " IMPL "?");
+#ifdef TRIE
+        assert(findName(input[i], e)->ch == '\0');
+#else
+        assert(0 == strcmp(findName(input[i], e)->lastName, input[i]));
+#endif
         printf("%s is found\n",input[i]);
     }
 #endif
@@ -116,10 +123,10 @@ int main(int argc, char *argv[])
 #endif
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
-#ifdef ORG
-    for(i=0; i<INPUT_NUM; ++i) findName(input[i], e);
-#elif BST
+#ifdef BST
     for(i=0; i<INPUT_NUM; ++i) findName(input[i], root);
+#else
+    for(i=0; i<INPUT_NUM; ++i) findName(input[i], e);
 #endif
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
@@ -128,10 +135,10 @@ int main(int argc, char *argv[])
     printf("execution time of findName() : %lf sec\n", cpu_time2);
 
     /* release all allocated entries */
-#ifdef ORG
-    freeList(&pHead);
-#elif BST
-    freeBST(&root);
+#ifdef BST
+    deleteBST(&root);
+#else
+    deleteList(&pHead);
 #endif
 
     return 0;

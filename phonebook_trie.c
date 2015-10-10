@@ -7,38 +7,34 @@
 
 entry *findName(char lastname[], entry *e)
 {
-    e = e->pChild;
-    if(lastname[0] == '\0') return e;
-    while (e != NULL) {
-        while(e->pNext != NULL && e->ch != lastname[0])
-            e = e->pNext;
-        if(e->ch == lastname[0]) return findName(lastname+1, e);
-        return NULL;
+    int i, alphNum, n = strlen(lastname);
+    for(i=0; i<=n; ++i) {
+        if(lastname[i]>='a') alphNum = lastname[i]-'a';
+        else if(lastname[i]>='A') alphNum = lastname[i]-'A';
+        else alphNum=26; // '\0'
+        e = e->pChild[alphNum];
+        if(e == NULL) return NULL;
     }
-    return NULL;
+    return e;
 }
 
 entry *append(char lastname[], entry *e)
 {
-    if(e->pChild != NULL) {
-        e = e->pChild;
-        while(e->ch != lastname[0] && e->pNext != NULL)
-            e = e->pNext;
-        if(e->ch == lastname[0]) append(lastname+1, e);
+    entry *pHead = e;
+    int i, j, alphNum, n = strlen(lastname);
+    for(i=0; i<=n; ++i) {
+        if(lastname[i]>='a') alphNum = lastname[i]-'a';
+        else if(lastname[i]>='A') alphNum = lastname[i]-'A';
+        else alphNum=26; // '\0'
+        if(e->pChild[alphNum] != NULL)
+            e = e->pChild[alphNum];
         else {
-            e->pNext = (entry *) malloc(sizeof(entry));
-            e = e->pNext;
-            e->ch = lastname[0];
-            e->pNext = e->pChild = NULL;
-            if(lastname[0]!='\0') append(lastname+1, e);
+            e->pChild[alphNum] = (entry *) malloc(sizeof(entry));
+            e = e->pChild[alphNum];
+            for(j=0; j<27; ++j) e->pChild[j] = NULL;
+            e->ch = lastname[i];
         }
-    } else {
-        e->pChild = (entry *) malloc(sizeof(entry));
-        e = e->pChild;
-        e->ch = lastname[0];
-        e->pChild = e->pNext = NULL;
-        if(lastname[0]!='\0') append(lastname+1, e);
     }
-    return NULL;
+    return pHead;
 }
 

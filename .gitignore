@@ -5,5 +5,6 @@
 *.list
 *.swp
 *.bak
-phonebook_opt
+phonebook_bst
 phonebook_orig
+phonebook_trie

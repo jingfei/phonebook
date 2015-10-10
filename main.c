@@ -22,6 +22,26 @@ static double diff_in_second(struct timespec t1, struct timespec t2)
     return (diff.tv_sec + diff.tv_nsec / 1000000000.0);
 }
 
+#ifdef TRIE
+void deleteList(entry **pHead)
+{
+    if( (*pHead) != NULL) {
+        int i;
+        for(i=0; i<27; ++i)
+            if( (*pHead)->pChild[i] != NULL)
+                deleteList(&(*pHead)->pChild[i]);
+        free(*pHead);
+    }
+}
+#elif BST
+void deleteBST(bst **root)
+{
+    if(*root==NULL) return;
+    deleteBST(&(*root)->pL);
+    deleteBST(&(*root)->pR);
+    free(*root);
+}
+#else
 void deleteList(entry **pHead)
 {
     entry *tmp;
@@ -30,15 +50,6 @@ void deleteList(entry **pHead)
         *pHead = (*pHead)->pNext;
         free(tmp);
     }
-}
-
-#ifdef BST
-void deleteBST(bst **root)
-{
-    if(*root==NULL) return;
-    deleteBST(&(*root)->pL);
-    deleteBST(&(*root)->pR);
-    free(*root);
 }
 #endif
 
@@ -62,7 +73,11 @@ int main(int argc, char *argv[])
     pHead = (entry *) malloc(sizeof(entry));
     printf("size of entry : %lu bytes\n", sizeof(entry));
     e = pHead;
+#ifdef TRIE
+    for(i=0; i<27; ++i) e->pChild[i] = NULL;
+#else
     e->pNext = NULL;
+#endif
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
@@ -73,11 +88,7 @@ int main(int argc, char *argv[])
             ++i;
         line[i - 1] = '\0';
         i = 0;
-#ifdef TRIE
-        append(line, e);
-#else
         e = append(line, e);
-#endif
         ++line_num;
     }
 #ifdef BST

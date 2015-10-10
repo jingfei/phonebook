@@ -21,12 +21,12 @@ typedef struct __PHONE_BOOK_ENTRY {
 typedef struct __PHONE_BOOK_TRIE {
     char ch;
     entry_detail *detail;
-    struct __PHONE_BOOK_TRIE *pNext;
-    struct __PHONE_BOOK_TRIE *pChild;
+    struct __PHONE_BOOK_TRIE *pChild[27];
 } entry;
 
 entry *findName(char lastname[], entry *t);
 entry *append(char lastName[], entry *e);
+entry *getNode();
 
 #endif
 

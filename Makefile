@@ -2,12 +2,16 @@ CC ?= gcc
 CFLAGS_common ?= -O0 -Wall -std=gnu99
 GOAL = ./phonebook_orig
 
-EXEC = phonebook_orig phonebook_bst phonebook_trie
+EXEC = phonebook_orig phonebook_bst phonebook_trie phonebook_opt
 all: $(EXEC)
 
 SRCS_common = main.c
 
 phonebook_orig: $(SRCS_common) phonebook_orig.c phonebook_orig.h
+	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -o $@ \
+		$(SRCS_common) $@.c
+
+phonebook_opt: $(SRCS_common) phonebook_opt.c phonebook_opt.h
 	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -o $@ \
 		$(SRCS_common) $@.c
 

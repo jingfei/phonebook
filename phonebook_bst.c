@@ -43,3 +43,11 @@ bst *convert_to_bst(entry **pHead, int n)
     return root;
 }
 
+void releaseList(bst **root)
+{
+    if(*root==NULL) return;
+    releaseList(&(*root)->pL);
+    releaseList(&(*root)->pR);
+    free(*root);
+}
+

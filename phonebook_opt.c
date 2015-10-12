@@ -25,3 +25,13 @@ entry *append(char lastName[], entry *e)
     return e;
 }
 
+void releaseList(entry **pHead)
+{
+    entry *tmp;
+    while(*pHead!=NULL) {
+        tmp = *pHead;
+        *pHead = (*pHead)->pNext;
+        free(tmp);
+    }
+}
+

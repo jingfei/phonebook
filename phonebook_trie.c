@@ -38,3 +38,14 @@ entry *append(char lastname[], entry *e)
     return pHead;
 }
 
+void releaseList(entry **pHead)
+{
+    if( (*pHead) != NULL) {
+        int i;
+        for(i=0; i<27; ++i)
+            if( (*pHead)->pChild[i] != NULL)
+                releaseList(&(*pHead)->pChild[i]);
+        free(*pHead);
+    }
+}
+

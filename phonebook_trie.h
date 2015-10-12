@@ -27,6 +27,7 @@ typedef struct __PHONE_BOOK_TRIE {
 entry *findName(char lastname[], entry *t);
 entry *append(char lastName[], entry *e);
 entry *getNode();
+void releaseList(entry **pHead);
 
 #endif
 

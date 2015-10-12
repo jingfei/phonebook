@@ -22,37 +22,6 @@ static double diff_in_second(struct timespec t1, struct timespec t2)
     return (diff.tv_sec + diff.tv_nsec / 1000000000.0);
 }
 
-#ifdef TRIE
-void deleteList(entry **pHead)
-{
-    if( (*pHead) != NULL) {
-        int i;
-        for(i=0; i<27; ++i)
-            if( (*pHead)->pChild[i] != NULL)
-                deleteList(&(*pHead)->pChild[i]);
-        free(*pHead);
-    }
-}
-#elif BST
-void deleteBST(bst **root)
-{
-    if(*root==NULL) return;
-    deleteBST(&(*root)->pL);
-    deleteBST(&(*root)->pR);
-    free(*root);
-}
-#else
-void deleteList(entry **pHead)
-{
-    entry *tmp;
-    while(*pHead!=NULL) {
-        tmp = *pHead;
-        *pHead = (*pHead)->pNext;
-        free(tmp);
-    }
-}
-#endif
-
 int main(int argc, char *argv[])
 {
     FILE *fp;
@@ -132,6 +101,7 @@ int main(int argc, char *argv[])
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
+
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
 #ifdef BST
@@ -147,9 +117,9 @@ int main(int argc, char *argv[])
 
     /* release all allocated entries */
 #ifdef BST
-    deleteBST(&root);
+    releaseList(&root);
 #else
-    deleteList(&pHead);
+    releaseList(&pHead);
 #endif
 
     return 0;

@@ -34,5 +34,6 @@ typedef struct __PHONE_BOOK_BST {
 
 entry *findName(char lastname[], entry *e);
 entry *append(char lastName[], entry *e);
+void releaseList(entry **pHead);
 
 #endif

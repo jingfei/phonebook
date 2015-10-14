@@ -29,7 +29,7 @@ ln -sf ../../scripts/pre-commit.hook .git/hooks/pre-commit
 You can use `make perf` to analyze phonebook_orig's efficiency and cache as default.
 If you want to analyze other files, use `make perf GOAL='file_name'`. For example, using `make perf GOAL=./phonebook_bst` to analyze bst method.
 
-# histogram.png
+# [histogram.png](histogram.png)
 
 After analyzing, I arrange the output data like the format
 ```txt
